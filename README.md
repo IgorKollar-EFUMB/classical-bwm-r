@@ -7,28 +7,22 @@ Comparisons are precise numerical judgments. The method returns point weights an
 A weight of 0.30 means 30% of the total importance in this criterion set.
 It is not a performance score of an alternative or a probability.
 
-## Start here
+## Quick start
 
-1. Download and extract this entire repository; do not run scripts inside a ZIP.
-2. Install R and, optionally, RStudio. Open RStudio or the R console.
-3. Set the working directory to the **extracted project root**.
-4. Install required packages listed below.
-5. Run the supplied example before replacing its input with your own.
+The implementation is a collection of R scripts, not an installable R
+package. Download the complete repository, set the extracted repository as
+the R working directory, install the single required package, and run the
+prepared example.
 
 ```r
-# Windows: use forward slashes and replace this path with your actual folder.
-setwd("C:/projects/classical-bwm-r")
-# macOS/Linux example: setwd("/Users/yourname/projects/classical-bwm-r")
-getwd()
-stopifnot(file.exists(file.path("R", "solve_bwm.R")))
+setwd("C:/Users/UserName/Documents/classical-bwm-r")
 install.packages("lpSolve", repos = "https://cloud.r-project.org")
 source(file.path("examples", "run_bwm_example.R"))
 ```
 
-Install the package once; source the scripts again in each new R session.
-No renv activation or automatic package installation is required.
-Use `getwd()` to check the directory: it must contain `R`, `data`,
-`examples`, and this README. Downloaded folders may have a `-main` suffix.
+Replace the example path with the actual location on your computer. The
+following sections explain every step and then show two ways to analyse your
+own data.
 
 ## Repository structure
 
@@ -45,7 +39,105 @@ Use `getwd()` to check the directory: it must contain `R`, `data`,
 | `tests/` | Independent validation and method regression tests. |
 | `REPRODUCIBILITY.md` | Recording and checking the computational environment. |
 
-## Prepare judgments and a CSV without programming experience
+## 1. Download and extract the repository
+
+1. Open <https://github.com/IgorKollar-EFUMB/classical-bwm-r>.
+2. For a published version, open **Releases**, select the required release,
+   and download its source-code ZIP archive. If no release is available yet,
+   select **Code → Download ZIP** on the repository's main page.
+3. Extract the complete archive to a permanent folder. Do not open or run the
+   R scripts directly inside the ZIP archive.
+
+Depending on how the archive was downloaded, the extracted folder may be
+named `classical-bwm-r`, `classical-bwm-r-0.1.0`, or
+`classical-bwm-r-main`. The folder name itself is not important. Its contents
+must include `R`, `data`, `examples`, `tests`, and `README.md`.
+
+On Windows, for example, the repository may be extracted to:
+
+```text
+C:\Users\UserName\Documents\classical-bwm-r
+```
+
+## 2. Install R, RStudio, and the required package
+
+Install a current version of R from <https://cran.r-project.org/>. RStudio is
+optional, but its script editor and working-directory controls are convenient
+for users who are new to R. If desired, install RStudio Desktop from
+<https://posit.co/download/rstudio-desktop/>.
+
+Open R or RStudio and install `lpSolve`:
+
+```r
+install.packages("lpSolve", repos = "https://cloud.r-project.org")
+```
+
+The package needs to be installed only once for a given R installation. An
+internet connection is required during installation, but not for subsequent
+calculations. If R asks whether to create or use a personal library, accept
+the proposed option. No `renv` activation or automatic package installation
+is required.
+
+## 3. Set and verify the working directory
+
+The working directory must be the extracted repository root, not its `R`,
+`data`, or `examples` subdirectory. Replace the path below with the actual
+path on your computer. In R code on Windows, use forward slashes:
+
+```r
+# Windows example
+setwd("C:/Users/UserName/Documents/classical-bwm-r")
+
+# macOS/Linux example
+# setwd("/Users/UserName/Documents/classical-bwm-r")
+```
+
+Verify the location before running an example:
+
+```r
+getwd()
+list.files()
+stopifnot(
+  file.exists(file.path("R", "validate_bwm_input.R")),
+  file.exists(file.path("R", "solve_bwm.R")),
+  file.exists(file.path("data", "bwm_example.csv"))
+)
+```
+
+If the check returns without an error, the relative paths used by the scripts
+are available. Set the working directory again after opening a new R session
+unless your R project or editor restores it automatically.
+
+## 4. Run the prepared Classical BWM example
+
+From the repository root, run:
+
+```r
+source(file.path("examples", "run_bwm_example.R"))
+```
+
+The script:
+
+1. loads `R/validate_bwm_input.R` and `R/solve_bwm.R`;
+2. reads the nine-criterion input from `data/bwm_example.csv`;
+3. validates the input and identifies the best and worst criteria;
+4. calculates the input-based Consistency Ratio (`CR_I`);
+5. solves the linear Classical BWM model; and
+6. prints the consistency assessment, optimal deviation, criterion weights,
+   ranking, and local consistency ratios.
+
+The prepared example should identify C1 as the best criterion and C9 as the
+worst criterion. Its global input-based consistency ratio is approximately
+`0.222222`; the applicable threshold is `0.3662`, so the input judgments are
+classified as acceptable. The weights sum to 1 up to numerical rounding.
+
+Run this example successfully before modifying any input or example script.
+It confirms that R, `lpSolve`, the working directory, and the repository files
+are working together correctly.
+
+## 5. Use Classical BWM with your own data
+
+### 5.1 Prepare judgments and a CSV file
 
 In a spreadsheet, put the three exact column names in the first row.
 Put one criterion in each subsequent row. Do not add title rows, blank rows,
@@ -57,40 +149,12 @@ European spreadsheet settings export semicolon-separated CSV files.
 For those files replace `read.csv(...)` with `read.csv2(...)`.
 Do not merely rename an XLSX file to CSV.
 
-Copy `data/my_input_template.csv` to your own filename and replace the
-criterion identifiers and both comparison columns. Keep the original example
-unchanged. You can inspect the imported data with:
-
-```r
-my_input <- read.csv("data/my_input_template.csv", stringsAsFactors = FALSE)
-names(my_input)
-str(my_input)
-print(my_input)
-```
-
 The required names are `criterion`, `best_to_others`, and
 `others_to_worst`. Both comparison columns must be numeric.
 The two judgments on a row do not have to add up to a fixed number.
 
-
 Use linear BWM when pairwise preferences are intended to be precise numerical
 judgments.
-
-## 1. Run the prepared Classical BWM example
-
-Set the working directory to the repository root and run:
-
-```r
-source(file.path("examples", "run_bwm_example.R"))
-```
-
-The script reads `data/bwm_example.csv`, validates the input, calculates
-`CR_I`, solves the linear model, and prints the consistency assessment, model
-deviation, weights, ranking, and local consistency ratios.
-
-## 2. Use Classical BWM with your own data
-
-### 2.1 Prepare the CSV file
 
 Create a comma-separated file with the following exact column names:
 
@@ -106,10 +170,16 @@ Example for five criteria:
 criterion,best_to_others,others_to_worst
 C1,1,5
 C2,2,4
-C3,3,4
+C3,3,3
 C4,4,2
 C5,5,1
 ```
+
+Save this example as `data/my_bwm.csv`. It is the five-criterion example used
+in the associated article. It differs from `data/my_input_template.csv`,
+which intentionally contains `C3,3,4` and produces an unacceptable
+consistency assessment to demonstrate the warning. Do not overwrite either
+supplied file; give each practical dataset a descriptive filename.
 
 The input must satisfy all of these rules:
 
@@ -127,7 +197,7 @@ The values express preference intensity, not ranks. For example, a value of 5
 expresses preference intensity 5 of the criterion in the numerator over the
 criterion in the denominator on the adopted BWM scale.
 
-### 2.2 Function input
+### 5.2 Function input
 
 `solve_bwm()` has one user input:
 
@@ -139,31 +209,119 @@ solve_bwm(input)
 solver settings are intentionally not exposed because the linear formulation
 has no method-specific tuning parameter.
 
-### 2.3 Run the calculation in R
+### 5.3 Run your own data directly in R
+
+After saving the example above as `data/my_bwm.csv`, run the following code
+from the repository root:
 
 ```r
 source(file.path("R", "validate_bwm_input.R"))
 source(file.path("R", "solve_bwm.R"))
 
 my_input <- read.csv(
-  file.path("data", "my_bwm_input.csv"),
+  file.path("data", "my_bwm.csv"),
   stringsAsFactors = FALSE
 )
 
+names(my_input)
+str(my_input)
+print(my_input)
+
 my_result <- solve_bwm(my_input)
 
+consistency <- my_result$input_consistency
+consistency[c(
+  "ratio",
+  "threshold",
+  "threshold_available",
+  "acceptable",
+  "assessment"
+)]
+consistency$most_inconsistent_criteria
+consistency$by_criterion
+
+if (isFALSE(consistency$acceptable)) {
+  warning(
+    "The input judgments do not satisfy the published ",
+    "consistency threshold. Review the identified judgments."
+  )
+} else if (is.na(consistency$acceptable)) {
+  message(
+    "No published consistency threshold is available ",
+    "for this combination."
+  )
+}
+
+my_result$best_criterion
+my_result$worst_criterion
 my_result$ranking
-my_result$input_consistency
 my_result$deviation
+sum(my_result$weights$weight)
 ```
 
-Optional export:
+For this five-criterion input, `CR_I = 0.2`, the applicable threshold is
+`0.2306`, and the assessment is acceptable. The highest calculated weight is
+assigned to C1 and the lowest to C5.
+
+Optional export of the ranking:
 
 ```r
-write.csv(my_result$weights, "my_bwm_results.csv", row.names = FALSE)
+write.csv(
+  my_result$ranking,
+  file.path("output", "my_bwm_results.csv"),
+  row.names = FALSE
+)
 ```
 
-### 2.4 Classical BWM results and interpretation
+Create `output` first with `dir.create("output", showWarnings = FALSE)` if it
+does not already exist.
+
+### 5.4 Use the prepared `examples/run_own_data.R` workflow
+
+For repeatable analyses and a more complete export, copy
+`examples/run_own_data.R` to a new script so that the original remains
+available as a template. Edit these two lines in the copy:
+
+```r
+input_path <- file.path("data", "my_bwm.csv")
+output_dir <- file.path("output", "my_bwm_analysis")
+```
+
+`input_path` must point to the CSV that you want to analyse. Use a separate,
+descriptive `output_dir` for every decision problem or scenario; files with
+the same names in an existing directory are overwritten.
+
+Save the edited script and run it from the repository root. If you edited the
+original template directly, use:
+
+```r
+source(file.path("examples", "run_own_data.R"))
+```
+
+If you saved a copy under another name, for example
+`examples/run_my_bwm.R`, run:
+
+```r
+source(file.path("examples", "run_my_bwm.R"))
+```
+
+The script prints the ranking, input-consistency summary, and model deviation.
+It creates the selected output directory and writes:
+
+| Output file | Content |
+|---|---|
+| `weights.csv` | Criterion weights sorted by rank. |
+| `input.csv` | Validated input used in the calculation. |
+| `local_consistency.csv` | Local input-consistency calculation for every criterion. |
+| `result.rds` | Complete R result object at full numerical precision. |
+| `sessionInfo.txt` | R, platform, and package environment information. |
+
+The supplied `run_own_data.R` initially points to
+`data/my_input_template.csv`. Its consistency warning is intentional because
+that teaching input is deliberately inconsistent. Change `input_path` before
+using the script for a practical analysis.
+
+### 5.5 Classical BWM results and interpretation
 
 The principal result table is available as both `weights` and `ranking`:
 
