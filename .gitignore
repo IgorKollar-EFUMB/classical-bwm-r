@@ -1,0 +1,8 @@
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+output/*
+!output/README.md
+*.html
+*_files/
