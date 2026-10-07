@@ -2,6 +2,8 @@
 
 This project calculates **criterion importance weights** from
 Best-to-Others and Others-to-Worst judgments. 
+Use linear BWM when pairwise preferences are intended to be precise numerical
+judgments.
 
 Comparisons are precise numerical judgments. The method returns point weights and a ranking using the linear formulation of BWM.
 A weight of 0.30 means 30% of the total importance in this criterion set.
@@ -20,9 +22,9 @@ install.packages("lpSolve", repos = "https://cloud.r-project.org")
 source(file.path("examples", "run_bwm_example.R"))
 ```
 
-Replace the example path with the actual location on your computer. The
-following sections explain every step and then show two ways to analyse your
-own data.
+Replace the example path with the actual location on your computer.
+
+The following sections explain every step and then show two ways to analyse your own data.
 
 ## Repository structure
 
@@ -30,8 +32,8 @@ own data.
 |---|---|
 | `R/validate_bwm_input.R` | Local input validation and Liang input-based consistency. |
 | `R/solve_bwm.R` | The method's solver. |
-| `examples/run_bwm_example.R` | Complete nine-criterion example with printed diagnostics. |
-| `examples/run_own_data.R` | Editable script for your own CSV; saves weights and the full result. |
+| `examples/run_bwm_example.R` | Fixed nine-criterion installation and reproducibility check; do not edit. |
+| `examples/run_own_data.R` | Sole recommended template for custom data; copy before editing. |
 | `data/bwm_example.csv` | Input for the prepared example. |
 | `data/my_input_template.csv` | Five-criterion teaching template; deliberately fails consistency. |
 | `data/pension_sustainability_input.csv` | Input for the associated study. |
@@ -131,30 +133,28 @@ worst criterion. Its global input-based consistency ratio is approximately
 `0.222222`; the applicable threshold is `0.3662`, so the input judgments are
 classified as acceptable. The weights sum to 1 up to numerical rounding.
 
-Run this example successfully before modifying any input or example script.
-It confirms that R, `lpSolve`, the working directory, and the repository files
-are working together correctly.
+Run this example unchanged. Keep both `examples/run_bwm_example.R` and
+`data/bwm_example.csv` unchanged as a fixed installation and reproducibility
+check. This is not the template for custom data and does not replace the
+regression tests in `tests/`. For your own analysis, use only a copy of
+`examples/run_own_data.R`, as described below.
 
 ## 5. Use Classical BWM with your own data
 
-### 5.1 Prepare judgments and a CSV file
+### 5.1 Copy the analysis template and prepare your data
 
-In a spreadsheet, put the three exact column names in the first row.
-Put one criterion in each subsequent row. Do not add title rows, blank rows,
-percent signs, formulas saved as text, or merged cells.
-Save as **CSV UTF-8**, then inspect the file in a text editor.
+Start by creating a copy of `examples/run_own_data.R`. This is the standard
+workflow for analysing your own data. In RStudio, open the file, choose
+**Save As**, and save the copy as `examples/run_my_analysis.R`.
+Alternatively, copy and rename the file in your file manager.
+Keep the original template and the reference files
+`examples/run_bwm_example.R` and `data/bwm_example.csv` unchanged.
 
-These examples use commas between fields and dots for decimals. Some
-European spreadsheet settings export semicolon-separated CSV files.
-For those files replace `read.csv(...)` with `read.csv2(...)`.
-Do not merely rename an XLSX file to CSV.
-
-The required names are `criterion`, `best_to_others`, and
-`others_to_worst`. Both comparison columns must be numeric.
-The two judgments on a row do not have to add up to a fixed number.
-
-Use linear BWM when pairwise preferences are intended to be precise numerical
-judgments.
+Next, prepare the CSV file that your copied script will read. Enter your
+judgments in this CSV; you do not need to enter comparison vectors directly
+in the R code. First define your criteria and select the most important
+(best) and least important (worst) criteria. These labels refer to importance,
+not to the performance of an alternative.
 
 Create a comma-separated file with the following exact column names:
 
@@ -164,7 +164,27 @@ Create a comma-separated file with the following exact column names:
 | `best_to_others` | Preference of the best criterion over the criterion in the current row. |
 | `others_to_worst` | Preference of the criterion in the current row over the worst criterion. |
 
-Example for five criteria:
+Enter the two comparison columns in the following directions:
+
+- **`best_to_others`: best criterion compared with the current criterion.**
+  A value of 5 means that the best criterion is preferred over the criterion
+  in the current row with intensity 5 on the adopted BWM scale.
+  Enter 1 in the best criterion's own row (a self-comparison).
+  Larger values express a greater preference for the best criterion over
+  the current criterion.
+- **`others_to_worst`: current criterion compared with the worst criterion.**
+  A value of 5 means that the criterion in the current row is preferred over
+  the worst criterion with intensity 5.
+  Enter 1 in the worst criterion's own row (a self-comparison).
+  Larger values express a greater preference for the current criterion over
+  the worst criterion.
+
+The values are comparison intensities, not criterion ranks or weights.
+The two numbers in a row do not have to add up to a fixed number, and the
+second column must not be obtained simply by reversing the first column.
+Elicit each comparison from the decision maker.
+
+Example for five criteria, with C1 selected as best and C5 as worst:
 
 ```csv
 criterion,best_to_others,others_to_worst
@@ -174,6 +194,22 @@ C3,3,3
 C4,4,2
 C5,5,1
 ```
+
+For example, the C2 row means that C1 is preferred over C2 with intensity 2,
+and C2 is preferred over C5 with intensity 4. The two direct C1-to-C5
+comparisons both equal 5: `best_to_others` in the C5 row and
+`others_to_worst` in the C1 row. The symmetric values in this illustrative
+example are not a requirement for your own data.
+
+In a spreadsheet, put the three exact column names in the first row.
+Put one criterion in each subsequent row. Do not add title rows, blank rows,
+percent signs, formulas saved as text, or merged cells.
+Save as **CSV UTF-8**, then inspect the file in a text editor.
+
+These examples use commas between fields. 
+Some European spreadsheet settings export semicolon-separated CSV files.
+For those files replace `read.csv(...)` with `read.csv2(...)`.
+Do not merely rename an XLSX file to CSV.
 
 Save this example as `data/my_bwm.csv`. It is the five-criterion example used
 in the associated article. It differs from `data/my_input_template.csv`,
@@ -193,135 +229,103 @@ The input must satisfy all of these rules:
 6. the two direct best-to-worst entries must be equal:
    `best_to_others[worst] = others_to_worst[best]`.
 
-The values express preference intensity, not ranks. For example, a value of 5
-expresses preference intensity 5 of the criterion in the numerator over the
-criterion in the denominator on the adopted BWM scale.
+These self-comparison rules are restrictions of this implementation: additional
+ties with the best or worst criterion are not supported.
 
-### 5.2 Function input
+### 5.2 Edit the input and output paths
 
-`solve_bwm()` has one user input:
-
-```r
-solve_bwm(input)
-```
-
-`input` must be a data frame with the three required columns. Package and
-solver settings are intentionally not exposed because the linear formulation
-has no method-specific tuning parameter.
-
-### 5.3 Run your own data directly in R
-
-After saving the example above as `data/my_bwm.csv`, run the following code
-from the repository root:
-
-```r
-source(file.path("R", "validate_bwm_input.R"))
-source(file.path("R", "solve_bwm.R"))
-
-my_input <- read.csv(
-  file.path("data", "my_bwm.csv"),
-  stringsAsFactors = FALSE
-)
-
-names(my_input)
-str(my_input)
-print(my_input)
-
-my_result <- solve_bwm(my_input)
-
-consistency <- my_result$input_consistency
-consistency[c(
-  "ratio",
-  "threshold",
-  "threshold_available",
-  "acceptable",
-  "assessment"
-)]
-consistency$most_inconsistent_criteria
-consistency$by_criterion
-
-if (isFALSE(consistency$acceptable)) {
-  warning(
-    "The input judgments do not satisfy the published ",
-    "consistency threshold. Review the identified judgments."
-  )
-} else if (is.na(consistency$acceptable)) {
-  message(
-    "No published consistency threshold is available ",
-    "for this combination."
-  )
-}
-
-my_result$best_criterion
-my_result$worst_criterion
-my_result$ranking
-my_result$deviation
-sum(my_result$weights$weight)
-```
-
-For this five-criterion input, `CR_I = 0.2`, the applicable threshold is
-`0.2306`, and the assessment is acceptable. The highest calculated weight is
-assigned to C1 and the lowest to C5.
-
-Optional export of the ranking:
-
-```r
-write.csv(
-  my_result$ranking,
-  file.path("output", "my_bwm_results.csv"),
-  row.names = FALSE
-)
-```
-
-Create `output` first with `dir.create("output", showWarnings = FALSE)` if it
-does not already exist.
-
-### 5.4 Use the prepared `examples/run_own_data.R` workflow
-
-For repeatable analyses and a more complete export, copy
-`examples/run_own_data.R` to a new script so that the original remains
-available as a template. Edit these two lines in the copy:
+At the beginning of your copy, replace the two settings with:
 
 ```r
 input_path <- file.path("data", "my_bwm.csv")
 output_dir <- file.path("output", "my_bwm_analysis")
 ```
 
-`input_path` must point to the CSV that you want to analyse. Use a separate,
-descriptive `output_dir` for every decision problem or scenario; files with
-the same names in an existing directory are overwritten.
+Both paths are relative to the repository root, even though the copied script
+is stored in `examples`. The unchanged template uses
+`data/my_input_template.csv` and `output/my_analysis`.
+The input file must already exist. The script creates the output directory.
+For another decision problem, use a descriptive CSV filename and a separate
+output directory. Reusing an output directory overwrites the named exports;
+the script reports which existing files will be replaced.
 
-Save the edited script and run it from the repository root. If you edited the
-original template directly, use:
+For the comma-separated example above, no further code changes are required.
+For a semicolon-separated CSV, replace `read.csv()` with `read.csv2()`
+at the import step. Check the printed column names and data types.
+
+The original template points to `data/my_input_template.csv`, which deliberately
+has unacceptable consistency. Its warning is expected. To reproduce the article,
+use `data/my_bwm.csv`, not the unchanged teaching template.
+
+### 5.3 Save and run the copy
+
+Save the edited file, ensure that the working directory is still the repository
+root, and run this command in the R console:
 
 ```r
-source(file.path("examples", "run_own_data.R"))
+source(file.path("examples", "run_my_analysis.R"))
 ```
 
-If you saved a copy under another name, for example
-`examples/run_my_bwm.R`, run:
+Run the complete script after every input change. The script uses explicit
+`print()` calls so that results appear when executed with `source()`.
+Do not interpret objects left from an earlier run if the current run stops
+with an error.
 
-```r
-source(file.path("examples", "run_my_bwm.R"))
-```
+The numbered script sections perform the following tasks:
 
-The script prints the ranking, input-consistency summary, and model deviation.
-It creates the selected output directory and writes:
+1. Check the working directory, required package, and input file.
+2. Print the imported path, dimensions, column names, types, values, and
+   missing-value counts. These reports support inspection; formal validation
+   occurs inside the solver.
+3. Call `solve_bwm(my_input)`, which validates the input internally once.
+4. Print the global ratio, threshold, availability, assessment, critical
+   criteria, and all local ratios sorted by decreasing discrepancy.
+5. Print best/worst criteria, ranking, weight sum, minimum weight, solver
+   status, and optimal linear-model deviation.
+6. Export the complete result and the computational environment.
+
+A consistency value of `FALSE` produces a warning; `NA` produces an
+informational message that a nonzero ratio cannot be classified using the
+published table. `TRUE` confirms the implemented consistency rule is met.
+The script prints this confirmation explicitly.
+Perfect consistency can be recognized even when no threshold is available.
+Invalid inputs stop the calculation; unacceptable consistency normally does
+not prevent optimization or export under R's default warning settings.
+
+**Expected warning for the teaching template.** The unchanged
+`data/my_input_template.csv` contains `C3,3,4`, giving `CR_I = 0.35`
+against a threshold of `0.2306`. Its unacceptable assessment is intentional
+and does not indicate a software error. The script repeats this explanation
+in the comments at the beginning of section 4; those comments are not printed
+to the console. This explanation applies only to the unchanged teaching
+dataset. For your own data, review every unacceptable assessment before
+using the weights, and revise judgments only with the decision maker's
+justification.
+
+For the five-criterion example, expect `CR_I = 0.2`, threshold `0.2306`,
+and an acceptable assessment. C3 has the largest local discrepancy.
+
+| Criterion | Weight (rounded) | Rank |
+|---|---:|---:|
+| C1 | 0.41577061 | 1 |
+| C2 | 0.23655914 | 2 |
+| C3 | 0.15770609 | 3 |
+| C4 | 0.11827957 | 4 |
+| C5 | 0.07168459 | 5 |
 
 | Output file | Content |
 |---|---|
-| `weights.csv` | Criterion weights sorted by rank. |
-| `input.csv` | Validated input used in the calculation. |
-| `local_consistency.csv` | Local input-consistency calculation for every criterion. |
-| `result.rds` | Complete R result object at full numerical precision. |
-| `sessionInfo.txt` | R, platform, and package environment information. |
+| `weights.csv` | Weights sorted by rank. |
+| `input.csv` | Validated input used by the solver. |
+| `local_consistency.csv` | Local calculations in original criterion order. |
+| `consistency_summary.csv` | Number of criteria, direct best-to-worst value, global ratio, threshold, availability, acceptability, assessment, critical criteria, deviation, and solver status. |
+| `result.rds` | Complete result object at full numerical precision. |
+| `sessionInfo.txt` | R, platform, and package environment. |
 
-The supplied `run_own_data.R` initially points to
-`data/my_input_template.csv`. Its consistency warning is intentional because
-that teaching input is deliberately inconsistent. Change `input_path` before
-using the script for a practical analysis.
+The export is a record of the calculation, not an endorsement of inconsistent
+judgments. Retain the original CSV and the edited script as well.
 
-### 5.5 Classical BWM results and interpretation
+### 5.4 Classical BWM results and interpretation
 
 The principal result table is available as both `weights` and `ranking`:
 
@@ -343,7 +347,10 @@ The value `result$deviation` is the optimal maximum absolute deviation
 \]
 
 A smaller `xi` means that the calculated weights fit the entered linear BWM
-relations more closely. 
+relations more closely. It does not establish the accuracy of the weights.
+`xi` is not `CR_I` and must not be compared with the input-consistency
+threshold. Optimal solver status does not establish acceptable input
+consistency. These distinctions are also printed in section 5 of the script.
 
 Interpret a Classical BWM result in this order:
 
@@ -357,7 +364,8 @@ Interpret a Classical BWM result in this order:
    score.
 4. **Inspect close weights and tied ranks.** Small numerical differences may
    not represent a meaningful managerial distinction.
-5. **Use `xi` as a model-fit diagnostic.** Lower is better, but the acceptance
+5. **Use `xi` as a model-fit diagnostic.** A smaller value indicates a closer
+   fit to the entered linear preference relations, but the acceptance
    decision comes from `CR_I`, not from an unsupported universal threshold for
    `xi`.
 
@@ -438,8 +446,7 @@ This is the maximum local ratio, so C4 is reported as critical.
 For **nine criteria and a_BW = 9**, the threshold is **0.3662**.
 The input assessment is therefore acceptable.
 
-Do not reuse 0.3662 for every dataset. For the five-criterion template
-below, `a_BW = 5`, the largest local discrepancy is at C3:
+Do not reuse 0.3662 for every dataset. For the supplied five-criterion teaching template, `a_BW = 5`, the largest local discrepancy is at C3:
 `abs(3*4 - 5)/(25 - 5) = 0.35`. Its threshold is **0.2306**,
 so this deliberately instructive template is **unacceptable**.
 The optimizer still runs; the template demonstrates why valid CSV data
@@ -520,35 +527,25 @@ their performance measures are normalized and how benefit/cost directions
 are handled. This repository estimates importance weights; it does not
 automatically make raw performance columns comparable.
 
-## Save a complete, auditable result
+## Preserve and reopen the analysis
 
-After calculating `my_result`, save more than just rounded weights:
+The user-data workflow automatically exports the six files listed above.
+Keep the input CSV, your copied script, output files, and the exact repository
+release or commit together. Use a new output directory for each scenario.
 
-```r
-dir.create("output", showWarnings = FALSE)
-write.csv(my_result$ranking, "output/weights.csv", row.names = FALSE)
-write.csv(my_result$input_consistency$by_criterion,
-          "output/local_consistency.csv", row.names = FALSE)
-saveRDS(my_result, "output/result.rds")
-writeLines(capture.output(sessionInfo()), "output/sessionInfo.txt")
-# Later, without running the optimizer again:
-saved_result <- readRDS("output/result.rds")
-```
-
-The editable `examples/run_own_data.R` performs these exports. Open that file
-in your editor, change `input_path` to your CSV, save it, and run:
+To inspect an existing result without running the optimizer again:
 
 ```r
-source(file.path("examples", "run_own_data.R"))
+saved_result <- readRDS(
+  file.path("output", "my_bwm_analysis", "result.rds")
+)
+print(saved_result$ranking)
+print(saved_result$input_consistency)
 ```
 
-Its default input is the teaching template with unacceptable consistency;
-replace it with your own justified judgments before practical use.
-It overwrites files with the same names; choose a new output directory for
-each decision or scenario. Keep the input CSV alongside your exports.
-Report the method, criterion definitions, decision maker, original judgments,
-CR_I, applicable threshold, weights, and linear-model deviation.
-Keep full precision in calculations and round only the displayed report.
+Report criterion definitions, decision maker, judgments, CR_I, threshold,
+weights, and model deviation. Keep full precision for calculations and round
+only displayed results.
 
 ## Troubleshooting
 
