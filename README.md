@@ -339,11 +339,11 @@ The principal result table is available as both `weights` and `ranking`:
 The value `result$deviation` is the optimal maximum absolute deviation
 `xi` in the linear BWM model:
 
-\[
+```math
 |w_B-a_{Bj}w_j|\leq\xi,
 \qquad
 |w_j-a_{jW}w_W|\leq\xi.
-\]
+```
 
 A smaller `xi` means that the calculated weights fit the entered linear BWM
 relations more closely. It does not establish the accuracy of the weights.
@@ -385,24 +385,24 @@ Before the optimization model is constructed, `validate_bwm_input()`:
 
 For criterion `j`, the local ratio is
 
-\[
+```math
 CR^I_j=
 \frac{|a_{Bj}a_{jW}-a_{BW}|}{a_{BW}^2-a_{BW}},
 \qquad a_{BW}>1,
-\]
+```
 
 and the global input-based Consistency Ratio is
 
-\[
+```math
 CR^I=\max_j CR^I_j.
-\]
+```
 
 The helper defines zero ratios for `a_BW = 1`, but this case cannot be entered through the current solver interface: the interface requires distinct best and worst criteria and exactly one self-comparison of 1 in each vector. Perfect cardinal consistency
 for a criterion means
 
-\[
+```math
 a_{Bj}a_{jW}=a_{BW}.
-\]
+```
 
 The calculated global ratio is compared with the threshold published for the
 applicable combination of the number of criteria and `a_BW`. The published
