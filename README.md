@@ -123,7 +123,7 @@ The script:
 1. loads `R/validate_bwm_input.R` and `R/solve_bwm.R`;
 2. reads the nine-criterion input from `data/bwm_example.csv`;
 3. validates the input and identifies the best and worst criteria;
-4. calculates the input-based Consistency Ratio (`CR_I`);
+4. calculates the input-based Consistency Ratio ($CR_I$);
 5. solves the linear Classical BWM model; and
 6. prints the consistency assessment, optimal deviation, criterion weights,
    ranking, and local consistency ratios.
@@ -292,8 +292,8 @@ Invalid inputs stop the calculation; unacceptable consistency normally does
 not prevent optimization or export under R's default warning settings.
 
 **Expected warning for the teaching template.** The unchanged
-`data/my_input_template.csv` contains `C3,3,4`, giving `CR_I = 0.35`
-against a threshold of `0.2306`. Its unacceptable assessment is intentional
+`data/my_input_template.csv` contains `C3,3,4`, giving $CR_I = 0.35$
+against a threshold of $0.2306$. Its unacceptable assessment is intentional
 and does not indicate a software error. The script repeats this explanation
 in the comments at the beginning of section 4; those comments are not printed
 to the console. This explanation applies only to the unchanged teaching
@@ -301,7 +301,7 @@ dataset. For your own data, review every unacceptable assessment before
 using the weights, and revise judgments only with the decision maker's
 justification.
 
-For the five-criterion example, expect `CR_I = 0.2`, threshold `0.2306`,
+For the five-criterion example, expect $CR_I = 0.2$, threshold $0.2306$,
 and an acceptable assessment. C3 has the largest local discrepancy.
 
 | Criterion | Weight (rounded) | Rank |
@@ -345,9 +345,9 @@ The value `result$deviation` is the optimal maximum absolute deviation
 |w_j-a_{jW}w_W|\leq\xi.
 ```
 
-A smaller `xi` means that the calculated weights fit the entered linear BWM
+A smaller $xi$ means that the calculated weights fit the entered linear BWM
 relations more closely. It does not establish the accuracy of the weights.
-`xi` is not `CR_I` and must not be compared with the input-consistency
+$xi$ is not $CR_I$ and must not be compared with the input-consistency
 threshold. Optimal solver status does not establish acceptable input
 consistency. These distinctions are also printed in section 5 of the script.
 
@@ -363,17 +363,17 @@ Interpret a Classical BWM result in this order:
    score.
 4. **Inspect close weights and tied ranks.** Small numerical differences may
    not represent a meaningful managerial distinction.
-5. **Use `xi` as a model-fit diagnostic.** A smaller value indicates a closer
+5. **Use $xi$ as a model-fit diagnostic.** A smaller value indicates a closer
    fit to the entered linear preference relations, but the acceptance
-   decision comes from `CR_I`, not from an unsupported universal threshold for
-   `xi`.
+   decision comes from $CR_I$, not from an unsupported universal threshold for
+   $xi$.
 
 A practical result should therefore have defensible input judgments, an
-acceptable `CR_I` where a published threshold is available, normalized
+acceptable $CR_I$ where a published threshold is available, normalized
 weights, and a ranking that the decision maker can substantively explain.
 
 
-## Understanding input consistency: CR_I
+## Understanding input consistency: $CR_I$
 
 Before the optimization model is constructed, `validate_bwm_input()`:
 
@@ -397,7 +397,7 @@ and the global input-based Consistency Ratio is
 CR^I=\max_j CR^I_j.
 ```
 
-The helper defines zero ratios for `a_BW = 1`, but this case cannot be entered through the current solver interface: the interface requires distinct best and worst criteria and exactly one self-comparison of 1 in each vector. Perfect cardinal consistency
+The helper defines zero ratios for $a_BW = 1$, but this case cannot be entered through the current solver interface: the interface requires distinct best and worst criteria and exactly one self-comparison of 1 in each vector. Perfect cardinal consistency
 for a criterion means
 
 ```math
@@ -405,11 +405,11 @@ a_{Bj}a_{jW}=a_{BW}.
 ```
 
 The calculated global ratio is compared with the threshold published for the
-applicable combination of the number of criteria and `a_BW`. The published
-table covers 3--9 criteria and `a_BW` values 3--9; a zero threshold is also
+applicable combination of the number of criteria and $a_BW$. The published
+table covers 3--9 criteria and $a_BW$ values 3--9; a zero threshold is also
 specified for scale value 2. The implementation does not extrapolate missing
-thresholds. When no published threshold is available, it reports `CR_I` but
-returns `NA` for the threshold and, for a nonzero ratio, the acceptability decision. Perfect consistency (`CR_I = 0`) is recognized even without a published threshold.
+thresholds. When no published threshold is available, it reports $CR_I$ but
+returns `NA` for the threshold and, for a nonzero ratio, the acceptability decision. Perfect consistency ($CR_I = 0$) is recognized even without a published threshold.
 
 An unacceptable assessment is a diagnostic result, not an error. The solver
 still returns weights so that the decision maker can inspect the complete
@@ -421,13 +421,13 @@ The object `result$input_consistency` contains:
 
 | Component | Interpretation |
 |---|---|
-| `ratio` | Global input-based ratio `CR_I`; the largest local discrepancy. |
-| `threshold` | Published acceptance threshold for the applicable `n` and `a_BW`. |
+| `ratio` | Global input-based ratio $CR_I$; the largest local discrepancy. |
+| `threshold` | Published acceptance threshold for the applicable `n` and $a_BW$. |
 | `threshold_available` | Whether the published threshold exists. |
 | `acceptable` | `TRUE`, `FALSE`, or `NA` when a decision cannot be made from the published table. |
 | `assessment` | Plain-language assessment. |
 | `n_criteria` | Number of criteria used to select the threshold. |
-| `scale_value` | Direct best-to-worst value `a_BW`. |
+| `scale_value` | Direct best-to-worst value $a_BW$. |
 | `most_inconsistent_criteria` | Criterion or tied criteria attaining the global ratio. |
 | `by_criterion` | Detailed local calculation for every criterion. |
 
@@ -438,22 +438,22 @@ most useful table when reviewing an unacceptable result.
 
 ### A worked check and what to revise
 
-The supplied nine-criterion example has `a_BW = 9`. For C4,
-`a_B4 = 5` and `a_4W = 5`, so its indirect comparison is 25.
-Its local ratio is `abs(25 - 9)/(81 - 9) = 0.222222...`.
+The supplied nine-criterion example has $a_BW = 9$. For C4,
+$a_B4 = 5$ and $a_4W = 5$, so its indirect comparison is 25.
+Its local ratio is $abs(25 - 9)/(81 - 9) = 0.222222$.
 This is the maximum local ratio, so C4 is reported as critical.
-For **nine criteria and a_BW = 9**, the threshold is **0.3662**.
+For **nine criteria and $a_BW = 9$**, the threshold is **$0.3662$**.
 The input assessment is therefore acceptable.
 
-Do not reuse 0.3662 for every dataset. For the supplied five-criterion teaching template, `a_BW = 5`, the largest local discrepancy is at C3:
-`abs(3*4 - 5)/(25 - 5) = 0.35`. Its threshold is **0.2306**,
+Do not reuse $0.3662$ for every dataset. For the supplied five-criterion teaching template, $a_BW = 5$, the largest local discrepancy is at C3:
+$abs(3*4 - 5)/(25 - 5) = 0.35$. Its threshold is **$0.2306$**,
 so this deliberately instructive template is **unacceptable**.
 The optimizer still runs; the template demonstrates why valid CSV data
 and acceptable judgments are different things.
 
 The threshold is selected from Liang et al. (2020), Table 3, using the number
 of criteria and the direct best-to-worst value used by this implementation.
-`scale_value` in the result is this `a_BW`, not simply the largest
+`scale_value` in the result is this $a_BW$, not simply the largest
 permitted number in the CSV format. The permitted modal scale remains 1--9.
 
 To review your own result:
@@ -472,7 +472,7 @@ ci$by_criterion[order(-ci$by_criterion$input_consistency_ratio), ]
    Keep the original and revised input files.
 5. Review all local ratios: after revising the largest one, another may become critical.
 
-`CR_I` is a dimensionless discrepancy measure, not a probability, an error
+$CR_I$ is a dimensionless discrepancy measure, not a probability, an error
 percentage in the weights, or an agreement score between experts.
 An acceptable result means that this specific input-consistency rule is met.
 It does not prove correct criterion selection, reliable expertise, stable
@@ -504,7 +504,7 @@ The output is one normalized point-weight vector. This implementation does
 not compute ranges of alternative optimal weights; the absence of intervals
 does not establish uniqueness or certainty.
 
-`deviation` (xi) measures the worst residual in the linear equations, not in
+`deviation` ($xi$) measures the worst residual in the linear equations, not in
 the original input products. `objective_value` is the same optimization
 objective; `solver_status = 0` means the linear program was solved optimally.
 Successful optimization is separate from acceptable input consistency.
@@ -572,8 +572,7 @@ The tests check structural validation, input consistency and expected linear BWM
 
 ## Associated manuscript
 
-**Best-Worst Method and α-cut intervals based Fuzzy Best-Worst Method in R: A
-Pension Sustainability Index Case Study**
+**Best-Worst Method and α-cut intervals based Fuzzy Best-Worst Method in R: A Pension Sustainability Index Case Study**
 
 Authors:
 
