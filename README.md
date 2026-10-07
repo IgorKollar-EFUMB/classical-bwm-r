@@ -337,7 +337,7 @@ The principal result table is available as both `weights` and `ranking`:
 `weights` preserves the CSV row order. `ranking` sorts the same rows by rank.
 
 The value `result$deviation` is the optimal maximum absolute deviation
-`xi` in the linear BWM model:
+$\xi$ in the linear BWM model:
 
 ```math
 |w_B-a_{Bj}w_j|\leq\xi,
@@ -345,9 +345,9 @@ The value `result$deviation` is the optimal maximum absolute deviation
 |w_j-a_{jW}w_W|\leq\xi.
 ```
 
-A smaller $xi$ means that the calculated weights fit the entered linear BWM
+A smaller $\xi$ means that the calculated weights fit the entered linear BWM
 relations more closely. It does not establish the accuracy of the weights.
-$xi$ is not $CR_I$ and must not be compared with the input-consistency
+$\xi$ is not $CR_I$ and must not be compared with the input-consistency
 threshold. Optimal solver status does not establish acceptable input
 consistency. These distinctions are also printed in section 5 of the script.
 
@@ -363,10 +363,10 @@ Interpret a Classical BWM result in this order:
    score.
 4. **Inspect close weights and tied ranks.** Small numerical differences may
    not represent a meaningful managerial distinction.
-5. **Use $xi$ as a model-fit diagnostic.** A smaller value indicates a closer
+5. **Use $\xi$ as a model-fit diagnostic.** A smaller value indicates a closer
    fit to the entered linear preference relations, but the acceptance
    decision comes from $CR_I$, not from an unsupported universal threshold for
-   $xi$.
+   $\xi$.
 
 A practical result should therefore have defensible input judgments, an
 acceptable $CR_I$ where a published threshold is available, normalized
@@ -397,7 +397,7 @@ and the global input-based Consistency Ratio is
 CR^I=\max_j CR^I_j.
 ```
 
-The helper defines zero ratios for $a_BW = 1$, but this case cannot be entered through the current solver interface: the interface requires distinct best and worst criteria and exactly one self-comparison of 1 in each vector. Perfect cardinal consistency
+The helper defines zero ratios for $a_{BW} = 1$, but this case cannot be entered through the current solver interface: the interface requires distinct best and worst criteria and exactly one self-comparison of 1 in each vector. Perfect cardinal consistency
 for a criterion means
 
 ```math
@@ -405,8 +405,8 @@ a_{Bj}a_{jW}=a_{BW}.
 ```
 
 The calculated global ratio is compared with the threshold published for the
-applicable combination of the number of criteria and $a_BW$. The published
-table covers 3--9 criteria and $a_BW$ values 3--9; a zero threshold is also
+applicable combination of the number of criteria and $a_{BW}$. The published
+table covers 3--9 criteria and $a_{BW}$ values 3--9; a zero threshold is also
 specified for scale value 2. The implementation does not extrapolate missing
 thresholds. When no published threshold is available, it reports $CR_I$ but
 returns `NA` for the threshold and, for a nonzero ratio, the acceptability decision. Perfect consistency ($CR_I = 0$) is recognized even without a published threshold.
@@ -422,12 +422,12 @@ The object `result$input_consistency` contains:
 | Component | Interpretation |
 |---|---|
 | `ratio` | Global input-based ratio $CR_I$; the largest local discrepancy. |
-| `threshold` | Published acceptance threshold for the applicable `n` and $a_BW$. |
+| `threshold` | Published acceptance threshold for the applicable `n` and $a_{BW}$. |
 | `threshold_available` | Whether the published threshold exists. |
 | `acceptable` | `TRUE`, `FALSE`, or `NA` when a decision cannot be made from the published table. |
 | `assessment` | Plain-language assessment. |
 | `n_criteria` | Number of criteria used to select the threshold. |
-| `scale_value` | Direct best-to-worst value $a_BW$. |
+| `scale_value` | Direct best-to-worst value $a_{BW}$. |
 | `most_inconsistent_criteria` | Criterion or tied criteria attaining the global ratio. |
 | `by_criterion` | Detailed local calculation for every criterion. |
 
@@ -438,14 +438,14 @@ most useful table when reviewing an unacceptable result.
 
 ### A worked check and what to revise
 
-The supplied nine-criterion example has $a_BW = 9$. For C4,
-$a_B4 = 5$ and $a_4W = 5$, so its indirect comparison is 25.
+The supplied nine-criterion example has $a_{BW} = 9$. For C4,
+$a_{B4} = 5$ and $a_{4W} = 5$, so its indirect comparison is 25.
 Its local ratio is $abs(25 - 9)/(81 - 9) = 0.222222$.
 This is the maximum local ratio, so C4 is reported as critical.
-For **nine criteria and $a_BW = 9$**, the threshold is **$0.3662$**.
+For **nine criteria and $a_{BW} = 9$**, the threshold is **$0.3662$**.
 The input assessment is therefore acceptable.
 
-Do not reuse $0.3662$ for every dataset. For the supplied five-criterion teaching template, $a_BW = 5$, the largest local discrepancy is at C3:
+Do not reuse $0.3662$ for every dataset. For the supplied five-criterion teaching template, $a_{BW} = 5$, the largest local discrepancy is at C3:
 $abs(3*4 - 5)/(25 - 5) = 0.35$. Its threshold is **$0.2306$**,
 so this deliberately instructive template is **unacceptable**.
 The optimizer still runs; the template demonstrates why valid CSV data
@@ -453,7 +453,7 @@ and acceptable judgments are different things.
 
 The threshold is selected from Liang et al. (2020), Table 3, using the number
 of criteria and the direct best-to-worst value used by this implementation.
-`scale_value` in the result is this $a_BW$, not simply the largest
+`scale_value` in the result is this $a_{BW}$, not simply the largest
 permitted number in the CSV format. The permitted modal scale remains 1--9.
 
 To review your own result:
@@ -504,11 +504,11 @@ The output is one normalized point-weight vector. This implementation does
 not compute ranges of alternative optimal weights; the absence of intervals
 does not establish uniqueness or certainty.
 
-`deviation` ($xi$) measures the worst residual in the linear equations, not in
+`deviation` ($\xi$) measures the worst residual in the linear equations, not in
 the original input products. `objective_value` is the same optimization
 objective; `solver_status = 0` means the linear program was solved optimally.
 Successful optimization is separate from acceptable input consistency.
-A value of xi = 0.05 is not a statement that all weights have 5% error.
+A value of $\xi = 0.05$ is not a statement that all weights have 5% error.
 
 Exact weight ties use minimum ranks (1, 1, 3). Near ties are still ordered.
 The order in `weights` follows the CSV; `ranking` is sorted.
