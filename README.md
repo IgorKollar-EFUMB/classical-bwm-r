@@ -219,22 +219,21 @@ supplied file; give each practical dataset a descriptive filename.
 
 The input must satisfy all of these rules:
 
-1. criterion identifiers must be unique;
-2. comparison values must be integers from 1 to 9;
-3. `best_to_others` must contain exactly one value equal to 1; its row is the
-   best criterion;
-4. `others_to_worst` must contain exactly one value equal to 1; its row is the
-   worst criterion;
-5. the best and worst criteria must differ; and
-6. the two direct best-to-worst entries must be equal:
+1. Each criterion must have a unique name.
+2. Both comparison columns must contain finite integer values from 1 to 9.
+3. The `best_to_others` column must contain exactly one value equal to 1. This
+   value identifies the best criterion.
+4. The `others_to_worst` column must contain exactly one value equal to 1.This
+   value identifies the worst criterion.
+5. The best and worst criteria must be different.
+6. The direct best-to-worst judgment must be identical in both vectors.
    `best_to_others[worst] = others_to_worst[best]`.
+7. Additional ties with the best or worst criterion are not supported.
 
-These self-comparison rules are restrictions of this implementation: additional
-ties with the best or worst criterion are not supported.
 
 ### 5.2 Edit the input and output paths
 
-At the beginning of your copy, replace the two settings with:
+At the beginning of your R script file, update the two settings with your paths:
 
 ```r
 input_path <- file.path("data", "my_bwm.csv")

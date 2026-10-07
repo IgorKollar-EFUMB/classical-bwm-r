@@ -28,9 +28,11 @@ if (!file.exists(input_path)) {
   stop("Input CSV not found: ", input_path, call. = FALSE)
 }
 
-# 2. Import and inspect. These reports do not replace solver validation.
-my_input <- read.csv(input_path, stringsAsFactors = FALSE)
+# 2. Import and inspect.
+#These reports do not replace solver validation.
 # For semicolon-separated CSV, replace read.csv above with read.csv2.
+my_input <- read.csv(input_path, stringsAsFactors = FALSE)
+
 cat("\nINPUT IMPORT\n")
 cat("Working directory: ", getwd(), "\n", sep = "")
 cat("Input file: ", normalizePath(input_path, winslash = "/"), "\n", sep = "")
