@@ -123,12 +123,12 @@ The script:
 1. loads `R/validate_bwm_input.R` and `R/solve_bwm.R`;
 2. reads the nine-criterion input from `data/bwm_example.csv`;
 3. validates the input and identifies the best and worst criteria;
-4. calculates the input-based Consistency Ratio ($CR_I$);
+4. calculates the input-based Consistency Ratio ($CR^I$);
 5. solves the linear Classical BWM model; and
 6. prints the consistency assessment, optimal deviation, criterion weights,
    ranking, and local consistency ratios.
 
-The prepared example should identify C1 as the best criterion and C9 as the
+The prepared example should identify $C_1$ as the best criterion and $C_9$ as the
 worst criterion. Its global input-based consistency ratio is approximately
 `0.222222`; the applicable threshold is `0.3662`, so the input judgments are
 classified as acceptable. The weights sum to 1 up to numerical rounding.
@@ -292,7 +292,7 @@ Invalid inputs stop the calculation; unacceptable consistency normally does
 not prevent optimization or export under R's default warning settings.
 
 **Expected warning for the teaching template.** The unchanged
-`data/my_input_template.csv` contains `C3,3,4`, giving $CR_I = 0.35$
+`data/my_input_template.csv` contains `C3,3,4`, giving $CR^I = 0.35$
 against a threshold of $0.2306$. Its unacceptable assessment is intentional
 and does not indicate a software error. The script repeats this explanation
 in the comments at the beginning of section 4; those comments are not printed
@@ -301,7 +301,7 @@ dataset. For your own data, review every unacceptable assessment before
 using the weights, and revise judgments only with the decision maker's
 justification.
 
-For the five-criterion example, expect $CR_I = 0.2$, threshold $0.2306$,
+For the five-criterion example, expect $CR^I = 0.2$, threshold $0.2306$,
 and an acceptable assessment. C3 has the largest local discrepancy.
 
 | Criterion | Weight (rounded) | Rank |
@@ -347,7 +347,7 @@ $\xi$ in the linear BWM model:
 
 A smaller $\xi$ means that the calculated weights fit the entered linear BWM
 relations more closely. It does not establish the accuracy of the weights.
-$\xi$ is not $CR_I$ and must not be compared with the input-consistency
+$\xi$ is not $CR^I$ and must not be compared with the input-consistency
 threshold. Optimal solver status does not establish acceptable input
 consistency. These distinctions are also printed in section 5 of the script.
 
@@ -365,15 +365,15 @@ Interpret a Classical BWM result in this order:
    not represent a meaningful managerial distinction.
 5. **Use $\xi$ as a model-fit diagnostic.** A smaller value indicates a closer
    fit to the entered linear preference relations, but the acceptance
-   decision comes from $CR_I$, not from an unsupported universal threshold for
+   decision comes from $CR^I$, not from an unsupported universal threshold for
    $\xi$.
 
 A practical result should therefore have defensible input judgments, an
-acceptable $CR_I$ where a published threshold is available, normalized
+acceptable $CR^I$ where a published threshold is available, normalized
 weights, and a ranking that the decision maker can substantively explain.
 
 
-## Understanding input consistency: $CR_I$
+## Understanding input consistency: $CR^I$
 
 Before the optimization model is constructed, `validate_bwm_input()`:
 
@@ -408,8 +408,8 @@ The calculated global ratio is compared with the threshold published for the
 applicable combination of the number of criteria and $a_{BW}$. The published
 table covers 3--9 criteria and $a_{BW}$ values 3--9; a zero threshold is also
 specified for scale value 2. The implementation does not extrapolate missing
-thresholds. When no published threshold is available, it reports $CR_I$ but
-returns `NA` for the threshold and, for a nonzero ratio, the acceptability decision. Perfect consistency ($CR_I = 0$) is recognized even without a published threshold.
+thresholds. When no published threshold is available, it reports $CR^I$ but
+returns `NA` for the threshold and, for a nonzero ratio, the acceptability decision. Perfect consistency ($CR^I = 0$) is recognized even without a published threshold.
 
 An unacceptable assessment is a diagnostic result, not an error. The solver
 still returns weights so that the decision maker can inspect the complete
@@ -421,7 +421,7 @@ The object `result$input_consistency` contains:
 
 | Component | Interpretation |
 |---|---|
-| `ratio` | Global input-based ratio $CR_I$; the largest local discrepancy. |
+| `ratio` | Global input-based ratio $CR^I$; the largest local discrepancy. |
 | `threshold` | Published acceptance threshold for the applicable `n` and $a_{BW}$. |
 | `threshold_available` | Whether the published threshold exists. |
 | `acceptable` | `TRUE`, `FALSE`, or `NA` when a decision cannot be made from the published table. |
@@ -472,7 +472,7 @@ ci$by_criterion[order(-ci$by_criterion$input_consistency_ratio), ]
    Keep the original and revised input files.
 5. Review all local ratios: after revising the largest one, another may become critical.
 
-$CR_I$ is a dimensionless discrepancy measure, not a probability, an error
+$CR^I$ is a dimensionless discrepancy measure, not a probability, an error
 percentage in the weights, or an agreement score between experts.
 An acceptable result means that this specific input-consistency rule is met.
 It does not prove correct criterion selection, reliable expertise, stable
@@ -517,7 +517,7 @@ Do not infer a substantial managerial difference from rounded close weights.
 For a practical sensitivity check, copy the input and revise a judgment only
 within a range the decision maker considers plausible. Preserve matching
 direct best-to-worst entries if that comparison changes. Rerun the method,
-recheck CR_I and compare weights by criterion identifier.
+recheck $CR^I$ and compare weights by criterion identifier.
 If a small justified revision changes the important ranking, disclose that
 sensitivity instead of describing the original ranks as definitive.
 
@@ -542,7 +542,7 @@ print(saved_result$ranking)
 print(saved_result$input_consistency)
 ```
 
-Report criterion definitions, decision maker, judgments, CR_I, threshold,
+Report criterion definitions, decision maker, judgments, $CR^I$, threshold,
 weights, and model deviation. Keep full precision for calculations and round
 only displayed results.
 
@@ -556,7 +556,7 @@ only displayed results.
 | More than one comparison equals 1 | This interface does not support additional ties with the best/worst. |
 | Direct comparisons do not match | Check the worst row of Best-to-Others and the best row of Others-to-Worst. |
 | Consistency is unacceptable | Inspect local ratios and discuss the conflicting judgments; optimization may still return weights. |
-| Threshold is NA | The published table does not cover the combination; a nonzero CR_I is not assessed. |
+| Threshold is NA | The published table does not cover the combination; a nonzero $CR^I$ is not assessed. |
 | Package is missing | Install `lpSolve` in the R installation used for this session. |
 | Optimization stops with an error | Preserve the input, parameters, error and `sessionInfo()`; do not interpret a previous run as the failed run. |
 
