@@ -3,6 +3,7 @@ message: "If you use this software, please cite the archived software release an
 title: "Classical BWM in R"
 type: software
 version: 1.0.0
+doi: "10.5281/zenodo.23396306"
 date-released: 2026-10-15
 url: "https://github.com/IgorKollar-EFUMB/classical-bwm-r"
 repository-code: "https://github.com/IgorKollar-EFUMB/classical-bwm-r"

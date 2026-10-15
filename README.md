@@ -613,8 +613,7 @@ Authors:
 
 Affiliation: Matej Bel University in Banská Bystrica, Slovakia.
 
-The manuscript is in preparation. Journal, publication year, and DOI metadata
-will be added when they become available.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23396306.svg)](https://doi.org/10.5281/zenodo.23396306)
 
 
 ## References and citation
