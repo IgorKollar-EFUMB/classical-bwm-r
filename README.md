@@ -40,6 +40,8 @@ The following sections explain every step and then show two ways to analyse your
 | `output/` | Your exported results. |
 | `tests/` | Independent validation and method regression tests. |
 | `REPRODUCIBILITY.md` | Recording and checking the computational environment. |
+| `CITATION.cff` | Software version and author metadata. |
+| `LICENSE` | MIT license. |
 
 ## 1. Download and extract the repository
 

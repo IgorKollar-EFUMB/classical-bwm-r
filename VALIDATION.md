@@ -1,6 +1,6 @@
 # Validation
 
-This document records the validation performed for the standalone Classical BWM implementation before publication.
+This document records the validation performed for the Classical BWM implementation before publication.
 
 ## Validation status
 
