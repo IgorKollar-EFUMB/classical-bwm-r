@@ -2,7 +2,10 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the archived software release and the methodological article for this method."
 title: "Classical BWM in R"
 type: software
-version: 0.1.0
+version: 1.0.0
+date-released: 2026-10-15
+url: "https://github.com/IgorKollar-EFUMB/classical-bwm-r"
+repository-code: "https://github.com/IgorKollar-EFUMB/classical-bwm-r"
 authors:
   - family-names: "Bruteničová"
     given-names: "Michaela"
@@ -25,6 +28,8 @@ keywords:
   - Best-Worst Method
   - linear programming
   - R
+  - decision analysis
+  - multiple criteria decision making
 abstract: >-
-  Standalone R implementation of Classical BWM, with input-based consistency
-  assessment, runnable examples and guidance for interpreting criterion weights.
+  R implementation of Classical BWM, with input-based consistency assessment,
+  runnable examples and guidance for interpreting criterion weights.

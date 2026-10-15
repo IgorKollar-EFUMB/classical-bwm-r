@@ -51,7 +51,7 @@ The following sections explain every step and then show a way to analyse your ow
    R scripts directly inside the ZIP archive.
 
 Depending on how the archive was downloaded, the extracted folder may be
-named `classical-bwm-r`, `classical-bwm-r-0.1.0`, or
+named `classical-bwm-r`, `classical-bwm-r-1.0.0`, or
 `classical-bwm-r-main`. The folder name itself is not important. Its contents
 must include `R`, `data`, `examples`, `tests`, and `README.md`.
 

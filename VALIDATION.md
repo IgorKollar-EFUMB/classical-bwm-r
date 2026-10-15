@@ -4,7 +4,7 @@ This document records the validation performed for the standalone Classical BWM 
 
 ## Validation status
 
-The automated tests and both example workflows were executed on 5 October 2026 using the following commands from the repository root:
+The automated tests and both example workflows were executed on 15 October 2026 using the following commands from the repository root:
 
 ```r
 source(file.path("tests", "run_tests.R"))
