@@ -52,7 +52,7 @@ consistency <- my_result$input_consistency
 
 # 4. Report global and local input consistency.
 # The supplied data/my_input_template.csv intentionally contains judgments
-# for which CR_I exceeds the applicable acceptance threshold.
+# for which CR^I exceeds the applicable acceptance threshold.
 # An "unacceptable" assessment is therefore expected for that unchanged
 # teaching dataset; it does not indicate a software error.
 # For your own data, review any unacceptable assessment before using the weights.
@@ -114,7 +114,7 @@ cat(
   sep = ""
 )
 cat(
-  "xi is not CR_I and must not be compared with the ",
+  "xi is not CR^I and must not be compared with the ",
   "input-consistency threshold.\n",
   sep = ""
 )
